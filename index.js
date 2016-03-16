@@ -2,13 +2,18 @@ var express = require('express');
 var app = express();
 
 function logIncoming(req, res, next) {
-    console.log('2 log incoming');
+    console.log('1 log incoming');
     next();
 }
 
-app.get(logIncoming);
+function auth(req, res, next) {
+    console.log('2 auth');
+    next();
+}
 
-app.get('/', logIncoming, function (req, res, next) {
+app.use(logIncoming);
+
+app.get('/', auth, function (req, res, next) {
     res.send('Hello World!');
 });
 
