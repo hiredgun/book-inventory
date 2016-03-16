@@ -22,32 +22,43 @@ app.get('/', auth, function (req, res, next) {
 var MongoClient = require('mongodb').MongoClient;
 var url = 'mongodb://localhost:27017/book_inventory_store';
 var collection = null;
-MongoClient.connect(url, function (err, db) {
-    //setTimeout(function () {
-    collection = db.collection('books');
-    //}, 10000);
-});
 
+var collectionPromise = MongoClient.
+    connect(url).
+    then(function (db) {
+        return db.collection('books');
+    });
 
 app.post('/stock', function (req, res, next) {
     var isbn = req.body.isbn;
     var count = req.body.count;
 
-    collection.updateOne(
-        {isbn: isbn},
-        {isbn: isbn, count: count},
-        {upsert: true});
+    collectionPromise.
+        then(function (collection) {
+            return collection.updateOne(
+                {isbn: isbn},
+                {isbn: isbn, count: count},
+                {upsert: true});
+        }).
+        then(function (result) {
+            res.json({isbn: req.body.isbn, count: req.body.count});
+        });
 
-    res.json({isbn: req.body.isbn, count: req.body.count});
 });
 
 
 app.get('/stock', function (req, res) {
-    collection.
-        find({}).
-        toArray(function (err, docs) {
-            res.json(docs);
-        });
+    collectionPromise.then(function(collection) {
+        return collection.find({}).toArray();
+    }).then(function(docs) {
+        res.json(docs);
+    });
+
+    //collection.
+    //    find({}).
+    //    toArray(function (err, docs) {
+    //        res.json(docs);
+    //    });
 });
 
 app.use(clientError);
