@@ -19,13 +19,34 @@ app.get('/', auth, function (req, res, next) {
     res.send('Hello World!');
 });
 
-app.get('/stock', function (req, res, next) {
-    throw new Error("database migration - fancy word for downtime");
-    res.send('Stock');
+
+app.post('/stock', function (req, res, next) {
+    var MongoClient = require('mongodb').MongoClient
+    var url = 'mongodb://localhost:27017/book_inventory_store';
+
+    var isbn = req.body.isbn;
+    var count = req.body.count;
+
+    MongoClient.connect(url, function (err, db) {
+        db.collection('books').updateOne(
+            {isbn: isbn},
+            {isbn: isbn, count: count},
+            {upsert: true});
+        console.log("Connected correctly to server");
+
+    });
+    res.json({isbn: req.body.isbn, count: req.body.count});
 });
 
-app.post('/stock', function(req, res, next) {
-    res.json({isbn: req.body.isbn, count: req.body.count});
+app.get('/stock', function(req, res) {
+    var MongoClient = require('mongodb').MongoClient;
+
+    var url = 'mongodb://localhost:27017/book_inventory_store';
+    MongoClient.connect(url, function (err, db) {
+        return db.collection('books').find({}).toArray(function(err, docs) {
+            res.json(docs);
+        });
+    });
 });
 
 app.use(clientError);
