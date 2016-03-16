@@ -1,4 +1,5 @@
 var express = require('express');
+var bodyParser = require('body-parser');
 var app = express();
 
 function logIncoming(req, res, next) {
@@ -12,6 +13,7 @@ function auth(req, res, next) {
 }
 
 app.use(logIncoming);
+app.use(bodyParser.json());
 
 app.get('/', auth, function (req, res, next) {
     res.send('Hello World!');
@@ -20,6 +22,10 @@ app.get('/', auth, function (req, res, next) {
 app.get('/stock', function (req, res, next) {
     throw new Error("database migration - fancy word for downtime");
     res.send('Stock');
+});
+
+app.post('/stock', function(req, res, next) {
+    res.json({isbn: req.body.isbn, count: req.body.count});
 });
 
 app.use(clientError);
