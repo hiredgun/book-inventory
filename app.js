@@ -19,34 +19,35 @@ app.get('/', auth, function (req, res, next) {
     res.send('Hello World!');
 });
 
+var MongoClient = require('mongodb').MongoClient;
+var url = 'mongodb://localhost:27017/book_inventory_store';
+var collection = null;
+MongoClient.connect(url, function (err, db) {
+    //setTimeout(function () {
+    collection = db.collection('books');
+    //}, 10000);
+});
+
 
 app.post('/stock', function (req, res, next) {
-    var MongoClient = require('mongodb').MongoClient
-    var url = 'mongodb://localhost:27017/book_inventory_store';
-
     var isbn = req.body.isbn;
     var count = req.body.count;
 
-    MongoClient.connect(url, function (err, db) {
-        db.collection('books').updateOne(
-            {isbn: isbn},
-            {isbn: isbn, count: count},
-            {upsert: true});
-        console.log("Connected correctly to server");
+    collection.updateOne(
+        {isbn: isbn},
+        {isbn: isbn, count: count},
+        {upsert: true});
 
-    });
     res.json({isbn: req.body.isbn, count: req.body.count});
 });
 
-app.get('/stock', function(req, res) {
-    var MongoClient = require('mongodb').MongoClient;
 
-    var url = 'mongodb://localhost:27017/book_inventory_store';
-    MongoClient.connect(url, function (err, db) {
-        return db.collection('books').find({}).toArray(function(err, docs) {
+app.get('/stock', function (req, res) {
+    collection.
+        find({}).
+        toArray(function (err, docs) {
             res.json(docs);
         });
-    });
 });
 
 app.use(clientError);
