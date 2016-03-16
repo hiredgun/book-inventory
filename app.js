@@ -1,7 +1,5 @@
 var express = require('express');
 var bodyParser = require('body-parser');
-var app = express();
-
 
 function logIncoming(req, res, next) {
     console.log('1 log incoming');
@@ -25,6 +23,8 @@ function serverError(err, req, res, next) {
 }
 
 module.exports = function(stockRepository) {
+    var app = express();
+
     app.use(logIncoming);
     app.use(bodyParser.json());
 
