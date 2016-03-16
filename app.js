@@ -42,7 +42,6 @@ app.get('/stock/:isbn', function (req, res) {
             } else {
                 res.status(404).json({error: 'No book with ISBN: ' + req.params.isbn});
             }
-            res.json({});
         });
 });
 
