@@ -1,5 +1,6 @@
 var request = require('supertest');
-var app = require('../app');
+var stockRepository = require('../inMemoryStockRepository')();
+var app = require('../app')(stockRepository);
 var assert = require('assert');
 
 describe('Book inventory', function () {
