@@ -35,6 +35,7 @@ app.post('/stock', function (req, res, next) {
 
     collectionPromise.
         then(function (collection) {
+            //throw new Error('sth bad');
             return collection.updateOne(
                 {isbn: isbn},
                 {isbn: isbn, count: count},
@@ -42,23 +43,21 @@ app.post('/stock', function (req, res, next) {
         }).
         then(function (result) {
             res.json({isbn: req.body.isbn, count: req.body.count});
-        });
+        }).
+        catch(next);
 
 });
 
 
-app.get('/stock', function (req, res) {
-    collectionPromise.then(function(collection) {
-        return collection.find({}).toArray();
-    }).then(function(docs) {
-        res.json(docs);
-    });
-
-    //collection.
-    //    find({}).
-    //    toArray(function (err, docs) {
-    //        res.json(docs);
-    //    });
+app.get('/stock', function (req, res, next) {
+    collectionPromise.
+        then(function (collection) {
+            return collection.find({}).toArray();
+        }).
+        then(function (docs) {
+            res.json(docs);
+        }).
+        catch(next);
 });
 
 app.use(clientError);
