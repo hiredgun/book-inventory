@@ -1,6 +1,6 @@
 var _ = require('lodash');
-var baseConfig = require('./base').config;
-var configurator = require('./base').configurator;
+var baseConfig = require('./common').config;
+var configurator = require('./common').configurator;
 
 var test =
 {
