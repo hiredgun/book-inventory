@@ -1,4 +1,4 @@
-var _ = require('lodash.merge');
+var _ = require('lodash');
 var baseConfig = require('./base').config;
 var configurator = require('./base').configurator;
 
