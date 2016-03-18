@@ -8,7 +8,8 @@ var test =
     config_vars: {
         MONGOLAB_URI: process.env.MONGOLAB_URI,
         NAME: 'konrad2'
-    }
+    },
+    log_drains: []
 };
 
 var config = _.merge({}, baseConfig, test);
